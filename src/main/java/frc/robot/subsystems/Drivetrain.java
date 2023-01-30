@@ -4,16 +4,25 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.BuiltInAccelerometer;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.sensors.RomiGyro;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Drivetrain extends SubsystemBase {
   private static final double kCountsPerRevolution = 1440.0;
-  private static final double kWheelDiameterInch = 2.75591; // 70 mm
+  private static final double kWheelDiameterMeters = 0.07;
+  private static final double kChasisWidthMeters = Units.inchesToMeters(5.95);
 
   // The Romi has the left and right motors set to
   // PWM channels 0 and 1 respectively
@@ -31,112 +40,91 @@ public class Drivetrain extends SubsystemBase {
   // Set up the RomiGyro
   private final RomiGyro m_gyro = new RomiGyro();
 
-  // Set up the BuiltInAccelerometer
-  private final BuiltInAccelerometer m_accelerometer = new BuiltInAccelerometer();
+  DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(kChasisWidthMeters);
+  DifferentialDriveOdometry odometry = new DifferentialDriveOdometry(getHeading(), getLeftDistanceMeters(), getRightDistanceMeters());
+
+  SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.3, 1.96, 0.06);
+
+  double p = 2.95, i = 0, d = 0;
+  PIDController leftPIDController = new PIDController(p, i, d);
+  PIDController rightPIDController = new PIDController(p, i, d);
+
+  Pose2d pose = new Pose2d();
 
   /** Creates a new Drivetrain. */
   public Drivetrain() {
-    // We need to invert one side of the drivetrain so that positive voltages
-    // result in both sides moving forward. Depending on how your robot's
-    // gearbox is constructed, you might have to invert the left side instead.
     m_rightMotor.setInverted(true);
 
     // Use inches as unit for encoder distances
-    m_leftEncoder.setDistancePerPulse((Math.PI * kWheelDiameterInch) / kCountsPerRevolution);
-    m_rightEncoder.setDistancePerPulse((Math.PI * kWheelDiameterInch) / kCountsPerRevolution);
-    resetEncoders();
+    m_leftEncoder.setDistancePerPulse((Math.PI * kWheelDiameterMeters) / kCountsPerRevolution);
+    m_rightEncoder.setDistancePerPulse((Math.PI * kWheelDiameterMeters) / kCountsPerRevolution);
+    reset();
+  }
+
+  @Override
+  public void periodic() {
+    updateOdometryAndPose();
+
+    SmartDashboard.putString("Speeds", getSpeeds().toString());
+    SmartDashboard.putData(leftPIDController);
+    SmartDashboard.putData(rightPIDController);
+  }
+
+  private void updateOdometryAndPose() {
+    pose = odometry.update(getHeading(), getLeftDistanceMeters(), getRightDistanceMeters());
   }
 
   public void arcadeDrive(double xaxisSpeed, double zaxisRotate) {
     m_diffDrive.arcadeDrive(xaxisSpeed, zaxisRotate);
   }
 
-  public void resetEncoders() {
+  public void reset() {
     m_leftEncoder.reset();
     m_rightEncoder.reset();
+    m_gyro.reset();
+    updateOdometryAndPose();
   }
 
-  public int getLeftEncoderCount() {
-    return m_leftEncoder.get();
+  public Rotation2d getHeading() {
+    return Rotation2d.fromDegrees(-m_gyro.getAngleX());
   }
 
-  public int getRightEncoderCount() {
-    return m_rightEncoder.get();
+  public DifferentialDriveWheelSpeeds getSpeeds() {
+    return new DifferentialDriveWheelSpeeds(
+        m_leftEncoder.getRate(),
+        m_rightEncoder.getRate()
+    );
   }
-
-  public double getLeftDistanceInch() {
+  public double getLeftDistanceMeters() {
     return m_leftEncoder.getDistance();
   }
 
-  public double getRightDistanceInch() {
+  public double getRightDistanceMeters() {
     return m_rightEncoder.getDistance();
   }
 
-  public double getAverageDistanceInch() {
-    return (getLeftDistanceInch() + getRightDistanceInch()) / 2.0;
+  public DifferentialDriveKinematics getKinematics() {
+    return kinematics;
   }
 
-  /**
-   * The acceleration in the X-axis.
-   *
-   * @return The acceleration of the Romi along the X-axis in Gs
-   */
-  public double getAccelX() {
-    return m_accelerometer.getX();
+  public Pose2d getPose() {
+    return pose;
   }
 
-  /**
-   * The acceleration in the Y-axis.
-   *
-   * @return The acceleration of the Romi along the Y-axis in Gs
-   */
-  public double getAccelY() {
-    return m_accelerometer.getY();
+  public SimpleMotorFeedforward getFeedforward() {
+    return feedforward;
   }
 
-  /**
-   * The acceleration in the Z-axis.
-   *
-   * @return The acceleration of the Romi along the Z-axis in Gs
-   */
-  public double getAccelZ() {
-    return m_accelerometer.getZ();
+  public PIDController getLeftPIDController() {
+    return leftPIDController;
   }
 
-  /**
-   * Current angle of the Romi around the X-axis.
-   *
-   * @return The current angle of the Romi in degrees
-   */
-  public double getGyroAngleX() {
-    return m_gyro.getAngleX();
+  public PIDController getRightPIDController() {
+    return rightPIDController;
   }
 
-  /**
-   * Current angle of the Romi around the Y-axis.
-   *
-   * @return The current angle of the Romi in degrees
-   */
-  public double getGyroAngleY() {
-    return m_gyro.getAngleY();
-  }
-
-  /**
-   * Current angle of the Romi around the Z-axis.
-   *
-   * @return The current angle of the Romi in degrees
-   */
-  public double getGyroAngleZ() {
-    return m_gyro.getAngleZ();
-  }
-
-  /** Reset the gyro. */
-  public void resetGyro() {
-    m_gyro.reset();
-  }
-
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
+  public void setOutputVolts(double left, double right) {
+    m_rightMotor.set(left / 12);
+    m_leftMotor.set(right / 12);
   }
 }
