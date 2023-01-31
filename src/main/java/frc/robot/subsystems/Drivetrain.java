@@ -23,6 +23,9 @@ public class Drivetrain extends SubsystemBase {
   private static final double kCountsPerRevolution = 1440.0;
   private static final double kWheelDiameterMeters = 0.07;
   private static final double kChasisWidthMeters = Units.inchesToMeters(5.95);
+  public static final double ksVolts = 0.929;
+  public static final double kvVoltSecondsPerMeter = 6.33;
+  public static final double kaVoltSecondsSquaredPerMeter = 0.0389;
 
   // The Romi has the left and right motors set to
   // PWM channels 0 and 1 respectively
@@ -43,9 +46,9 @@ public class Drivetrain extends SubsystemBase {
   DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(kChasisWidthMeters);
   DifferentialDriveOdometry odometry = new DifferentialDriveOdometry(getHeading(), getLeftDistanceMeters(), getRightDistanceMeters());
 
-  SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.3, 1.96, 0.06);
+  SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(ksVolts, kvVoltSecondsPerMeter, kaVoltSecondsSquaredPerMeter);
 
-  double p = 2.95, i = 0, d = 0;
+  double p = 0.085, i = 0, d = 0;
   PIDController leftPIDController = new PIDController(p, i, d);
   PIDController rightPIDController = new PIDController(p, i, d);
 
@@ -95,6 +98,7 @@ public class Drivetrain extends SubsystemBase {
         m_rightEncoder.getRate()
     );
   }
+  
   public double getLeftDistanceMeters() {
     return m_leftEncoder.getDistance();
   }

@@ -2,12 +2,17 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/PIDController[1]": "PIDController",
+      "/SmartDashboard/PIDController[2]": "PIDController",
       "/SmartDashboard/SendableChooser[0]": "String Chooser"
     }
   },
   "NetworkTables": {
     "transitory": {
       "SmartDashboard": {
+        "PIDController[2]": {
+          "open": true
+        },
         "open": true
       }
     }
