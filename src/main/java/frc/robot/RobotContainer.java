@@ -14,6 +14,8 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -22,9 +24,16 @@ import edu.wpi.first.wpilibj2.command.RamseteCommand;
 public class RobotContainer {
   private final Drivetrain m_drivetrain = new Drivetrain();
   private final XboxController m_controller = new XboxController(0);
-
+  private final Field2d m_field = new Field2d();
+  
   public RobotContainer() {
+    SmartDashboard.putData("Field", m_field);
+    
     configureButtonBindings();
+  }
+
+  public void periodic() {
+    m_field.setRobotPose(m_drivetrain.getPose());
   }
 
   private void configureButtonBindings() {
