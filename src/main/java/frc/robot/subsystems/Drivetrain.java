@@ -14,8 +14,8 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import frc.robot.sensors.RomiGyro;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj.romi.RomiGyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -69,8 +69,16 @@ public class Drivetrain extends SubsystemBase {
     updateOdometryAndPose();
 
     SmartDashboard.putString("Speeds", getSpeeds().toString());
-    SmartDashboard.putData(leftPIDController);
-    SmartDashboard.putData(rightPIDController);
+    SmartDashboard.putData("Left PID", leftPIDController);
+    SmartDashboard.putData("Right PID", rightPIDController);
+    SmartDashboard.putNumber("Left Motor Voltage", m_leftMotor.get());
+    SmartDashboard.putNumber("Right Motor Voltage", m_rightMotor.get());
+    SmartDashboard.putNumber("Left Encoder Distance", getLeftDistanceMeters());
+    SmartDashboard.putNumber("Right Encoder Distance", getRightDistanceMeters());
+    SmartDashboard.putNumber("Gyro X angle", m_gyro.getAngleX());
+    SmartDashboard.putNumber("Gyro Y angle", m_gyro.getAngleY());
+    SmartDashboard.putNumber("Gyro Z angle", m_gyro.getAngleZ());
+    SmartDashboard.putNumber("Gyro Rotation", m_gyro.getRotation2d().getDegrees());
   }
 
   private void updateOdometryAndPose() {
@@ -89,7 +97,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public Rotation2d getHeading() {
-    return Rotation2d.fromDegrees(-m_gyro.getAngleX());
+    return m_gyro.getRotation2d();
   }
 
   public DifferentialDriveWheelSpeeds getSpeeds() {
@@ -128,7 +136,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void setOutputVolts(double left, double right) {
-    m_rightMotor.set(left / 12);
-    m_leftMotor.set(right / 12);
+    m_rightMotor.set(right / 12);
+    m_leftMotor.set(left / 12);
   }
 }

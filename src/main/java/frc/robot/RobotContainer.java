@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.ArcadeDrive;
+import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
@@ -46,28 +47,21 @@ public class RobotContainer {
         Units.feetToMeters(2.0), Units.feetToMeters(2.0));
     config.setKinematics(m_drivetrain.getKinematics());
 
+    var hundredInches = Units.inchesToMeters(100);
+
     Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
         Arrays.asList(
-          new Pose2d(), 
-          new Pose2d(1.0, 0, new Rotation2d()),
-          new Pose2d(2.3, 1.2, Rotation2d.fromDegrees(90.0))),
+          new Pose2d()
+          , new Pose2d(hundredInches, 0, new Rotation2d())
+          , new Pose2d(hundredInches, hundredInches, new Rotation2d(180))
+          , new Pose2d(hundredInches, -hundredInches, new Rotation2d())
+          // , new Pose2d(hundredInches, 0, new Rotation2d())
+          // , new Pose2d(0,0, new Rotation2d())
+        ),
         config
     );
 
-    RamseteCommand command = new RamseteCommand(
-        trajectory,
-        m_drivetrain::getPose,
-        new RamseteController(2, .7),
-        m_drivetrain.getFeedforward(),
-        m_drivetrain.getKinematics(),
-        m_drivetrain::getSpeeds,
-        m_drivetrain.getLeftPIDController(),
-        m_drivetrain.getRightPIDController(),
-        m_drivetrain::setOutputVolts,
-        m_drivetrain
-    );
-
-    return command.andThen(() -> m_drivetrain.setOutputVolts(0, 0));
+    return new FollowTrajectoryCommand(m_drivetrain, trajectory);
   }
 
   public Command getArcadeDriveCommand() {
