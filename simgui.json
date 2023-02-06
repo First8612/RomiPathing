@@ -35,16 +35,10 @@
     },
     "transitory": {
       "SmartDashboard": {
-        "Left PID": {
-          "open": true
-        },
         "PIDController[1]": {
           "open": true
         },
         "PIDController[2]": {
-          "open": true
-        },
-        "Right PID": {
           "open": true
         },
         "open": true
@@ -60,7 +54,7 @@
               "autoFit": true
             }
           ],
-          "height": 206,
+          "height": 436,
           "series": [
             {
               "color": [
@@ -79,7 +73,7 @@
               "autoFit": true
             }
           ],
-          "height": 206,
+          "height": 436,
           "series": [
             {
               "color": [
@@ -98,62 +92,42 @@
                 1.0
               ],
               "id": "NT:/SmartDashboard/Right Motor Voltage"
-            }
-          ]
-        },
-        {
-          "axis": [
-            {
-              "autoFit": true
-            }
-          ],
-          "height": 206,
-          "series": [
-            {
-              "color": [
-                0.2980392277240753,
-                0.44705885648727417,
-                0.6901960968971252,
-                1.0
-              ],
-              "id": "NT:/SmartDashboard/Left Encoder Distance"
             },
             {
               "color": [
-                0.8666667342185974,
-                0.5176470875740051,
-                0.32156863808631897,
+                0.3333333432674408,
+                0.658823549747467,
+                0.4078431725502014,
                 1.0
               ],
-              "id": "NT:/SmartDashboard/Right Encoder Distance"
-            }
-          ]
-        },
-        {
-          "axis": [
-            {
-              "autoFit": true
-            }
-          ],
-          "height": 206,
-          "series": [
-            {
-              "color": [
-                0.2980392277240753,
-                0.44705885648727417,
-                0.6901960968971252,
-                1.0
-              ],
-              "id": "NT:/SmartDashboard/Left PID/setpoint"
+              "id": "NT:/SmartDashboard/Left Motor Setpoint (in)"
             },
             {
               "color": [
-                0.8666667342185974,
-                0.5176470875740051,
+                0.7686275243759155,
+                0.30588236451148987,
                 0.32156863808631897,
                 1.0
               ],
-              "id": "NT:/SmartDashboard/Right PID/setpoint"
+              "id": "NT:/SmartDashboard/Left Motor Setpoint (out)"
+            },
+            {
+              "color": [
+                0.5058823823928833,
+                0.44705885648727417,
+                0.7019608020782471,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/Right Motor Setpoint (in)"
+            },
+            {
+              "color": [
+                0.5764706134796143,
+                0.4705882668495178,
+                0.3764706254005432,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/Right Motor Setpoint (out)"
             }
           ]
         }

@@ -90,6 +90,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void reset() {
+    this.setOutputVolts(0, 0);
     m_leftEncoder.reset();
     m_rightEncoder.reset();
     m_gyro.reset();
@@ -136,7 +137,16 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void setOutputVolts(double left, double right) {
-    m_rightMotor.set(right / 12);
-    m_leftMotor.set(left / 12);
+    var rightSetpoint = right / 12;
+    var leftSetpoint = left  /12;
+
+    SmartDashboard.putNumber("Left Motor Setpoint (in)", leftSetpoint);
+    SmartDashboard.putNumber("Right Motor Setpoint (in)", rightSetpoint);
+
+    m_leftMotor.set(leftSetpoint);
+    m_rightMotor.set(rightSetpoint);
+
+    SmartDashboard.putNumber("Left Motor Setpoint (out)", m_leftMotor.get());
+    SmartDashboard.putNumber("Right Motor Setpoint (out)", m_rightMotor.get());
   }
 }
