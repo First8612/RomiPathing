@@ -3,6 +3,7 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/FollowTrajectoryCommand": "Command",
       "/SmartDashboard/Left PID": "PIDController",
       "/SmartDashboard/PIDController[1]": "PIDController",
       "/SmartDashboard/PIDController[2]": "PIDController",
@@ -34,6 +35,9 @@
     },
     "transitory": {
       "SmartDashboard": {
+        "Left PID": {
+          "open": true
+        },
         "PIDController[1]": {
           "open": true
         },
@@ -56,7 +60,7 @@
               "autoFit": true
             }
           ],
-          "height": 202,
+          "height": 206,
           "series": [
             {
               "color": [
@@ -75,7 +79,7 @@
               "autoFit": true
             }
           ],
-          "height": 202,
+          "height": 206,
           "series": [
             {
               "color": [
@@ -103,7 +107,7 @@
               "autoFit": true
             }
           ],
-          "height": 202,
+          "height": 206,
           "series": [
             {
               "color": [
@@ -131,7 +135,7 @@
               "autoFit": true
             }
           ],
-          "height": 202,
+          "height": 206,
           "series": [
             {
               "color": [
