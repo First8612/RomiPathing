@@ -40,9 +40,6 @@ public class Drivetrain extends SubsystemBase {
   // Set up the differential drive controller
   private final DifferentialDrive m_diffDrive = new DifferentialDrive(m_leftMotor, m_rightMotor);
 
-  // Set up the RomiGyro
-  private final RomiGyro m_gyro = new RomiGyro();
-
   DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(kChasisWidthMeters);
   DifferentialDriveOdometry odometry = new DifferentialDriveOdometry(getHeading(), getLeftDistanceMeters(), getRightDistanceMeters());
 
@@ -53,9 +50,11 @@ public class Drivetrain extends SubsystemBase {
   PIDController rightPIDController = new PIDController(p, i, d);
 
   Pose2d pose = new Pose2d();
+  private RomiGyro m_gyro;
 
   /** Creates a new Drivetrain. */
-  public Drivetrain() {
+  public Drivetrain(RomiGyro gyro) {
+    this.m_gyro = gyro;
     m_rightMotor.setInverted(true);
 
     // Use inches as unit for encoder distances
@@ -98,6 +97,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public Rotation2d getHeading() {
+    if (m_gyro == null) return new Rotation2d();
     return m_gyro.getRotation2d();
   }
 
@@ -148,5 +148,9 @@ public class Drivetrain extends SubsystemBase {
 
     SmartDashboard.putNumber("Left Motor Setpoint (out)", m_leftMotor.get());
     SmartDashboard.putNumber("Right Motor Setpoint (out)", m_rightMotor.get());
+  }
+
+  public void setDriveSafety(boolean enabled) {
+    m_diffDrive.setSafetyEnabled(enabled);
   }
 }

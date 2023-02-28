@@ -27,13 +27,14 @@ public class FollowTrajectoryCommand extends RamseteCommand {
     @Override
     public void initialize() {
         drivetrain.reset();
+        drivetrain.setDriveSafety(false); // https://www.chiefdelphi.com/t/bug-or-misunderstanding-in-trajectory-tutorial-and-ramsete-example/373989/5
         super.initialize();
     }
 
     @Override
     public void end(boolean interrupted) {
         super.end(interrupted);
-        
+        drivetrain.setDriveSafety(true);
         drivetrain.setOutputVolts(0, 0);
     }
 }

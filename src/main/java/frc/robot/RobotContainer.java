@@ -13,16 +13,19 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.romi.RomiGyro;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.ArcadeDrive;
+import frc.robot.commands.DriveDistanceCommand;
 import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class RobotContainer {
-  private final Drivetrain m_drivetrain = new Drivetrain();
+  private final RomiGyro m_gyro = new RomiGyro();
+  private final Drivetrain m_drivetrain = new Drivetrain(m_gyro);
   private final XboxController m_controller = new XboxController(0);
   private final Field2d m_field = new Field2d();
   private final SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -69,6 +72,8 @@ public class RobotContainer {
         config);
     var simpleTrajectoryCommand = new FollowTrajectoryCommand(m_drivetrain, simpleTrajectory);
     chooser.addOption("Path 3", simpleTrajectoryCommand);
+
+    chooser.addOption("Drive Distance", new DriveDistanceCommand(2, m_drivetrain, m_gyro));
     
     m_chooser.setDefaultOption("Path 1", trajectory1Command);
   }
